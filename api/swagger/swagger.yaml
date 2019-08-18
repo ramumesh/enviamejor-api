@@ -1,0 +1,229 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Mobile APIs
+# during dev, should point to your local machine
+host: localhost:8080
+# basePath prefixes all resource paths
+basePath: /
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /user/login:
+    x-swagger-router-controller: loginUser
+    post:
+      operationId: loginUser
+      summary: This api is to log in the user with a phone and password.
+      consumes: 
+        - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Login user details request
+        schema:
+          $ref: '#/definitions/LoginUserRequestFormat'
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ResponseFormat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /user/register:
+    x-swagger-router-controller: registerUser
+    post:
+      operationId: registerUser
+      summary: This api is to register the user with a password.
+      consumes: 
+        - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Register request format
+        schema:
+          $ref: '#/definitions/RegisterUserRequestFormat'
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ResponseFormat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      
+  /user/validate:
+    x-swagger-router-controller: validateUser
+    post:
+      operationId: validateUser
+      summary: This api is to validate the user details got from the invite url.
+      consumes: 
+        - application/json
+      parameters:
+      - in: body
+        name: body
+        description: User invite url validation request
+        schema:
+          $ref: '#/definitions/ValidateUserRequestFormat'
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ResponseFormat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /user/profile:
+    x-swagger-router-controller: getProfile
+    get:
+      operationId: getProfile
+      summary: This api is to get the profile of the user.
+      consumes: 
+        - application/json
+      parameters:
+      - in: query
+        name: customerId
+        description: customerId of the user
+        type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ResponseFormat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /profile/enable:
+    x-swagger-router-controller: enableProfile
+    post:
+      operationId: enableProfile
+      summary: This api is used for enabling the customer and sharing the customers profile with the system.
+      consumes:
+        - application/json
+      parameters:
+        - in: header
+          name: vendorId
+          description: Vendor Identifier
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: The user to create.
+          schema:
+            $ref: '#/definitions/ProfileShareRequestFormat'     # <----------
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ResponseFormat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+# complex objects have schema definitions
+definitions:
+  LoginUserRequestFormat:
+    type: object
+    properties:
+      phoneNumber:
+        type: string
+      pin:
+        type: string
+    required:
+     - phoneNumber
+     - pin
+  RegisterUserRequestFormat:
+    type: object
+    properties:
+      phoneNumber:
+        type: string
+      pin:
+        type: string
+    required:
+     - phoneNumber
+     - pin
+  ValidateUserRequestFormat:
+    type: object
+    properties:
+      referenceCode:
+        type: string
+      referenceToken:
+        type: string
+    required:
+     - referenceCode
+     - referenceToken
+  ProfileShareRequestFormat:
+    type: object
+    properties:
+      firstName:
+        type: string
+      middleName:
+        type: string
+      lastName:
+        type: string
+      phoneNumber:
+        type: integer
+      address:
+        type: string
+      city:
+        type: string
+      county:
+        type: string
+      state:
+        type: string
+      zip:
+        type: integer
+      vendorCustomerId:
+        type: string
+      homeStoreNumber:
+        type: string
+    required:
+     - phoneNumber
+     - firstName
+     - address
+     - vendorCustomerId
+     - homeStoreNumber
+     
+  ResponseFormat:
+    type: object
+    required:
+      - data
+      - userMessage
+      - internalMessage
+    properties:
+      data:
+        type: object
+      userMessage:
+        type: string
+      internalMessage:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
