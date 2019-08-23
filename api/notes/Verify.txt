@@ -1,0 +1,8 @@
+User clicks on invite url
+App calls the verify service to check user already validated the reference number
+if no naviagte to register screen else
+Validate screen is launched 
+User enters the reference number 
+App calls the validate service and set the active flag to true
+On success of validate service App naviagtes to Register screen
+On failure todo

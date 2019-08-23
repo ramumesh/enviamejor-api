@@ -9,10 +9,10 @@ module.exports = {
   enableProfile: enableProfile
 };
 function enableProfile(req, res) {
-  var vendorId = req.swagger.params.vendorId.value;
+  var vendorId = req.get('vendorId');
   var service = {
     api: 'enableProfile',
-    requestData: req.swagger.params.body.value
+    requestData: req.body
   };
   service.requestData.vendorId = vendorId;
   // Todo Send inviteURl through sms

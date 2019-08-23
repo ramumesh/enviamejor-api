@@ -1,28 +1,32 @@
 'use strict';
-'use strict';
-var SwaggerExpress = require('swagger-express-mw');
-var app = require('express')();
+var express = require('express');
+var app = express();
 var cors = require('cors');
 var database = require('./api/helpers/database');
 var log = require('./api/helpers/log');
-module.exports = app; // for testing
+var port = process.env.PORT || 8080;
 app.use(cors());
-var config = {
-  appRoot: __dirname // required config
-};
+app.use(express.json());
+app.post('/profile/enable',require('./api/controllers/enableProfile').enableProfile);
+app.post('/user/validate',require('./api/controllers/validateUser').validateUser);
+app.post('/user/register',require('./api/controllers/registerUser').registerUser);
+app.post('/user/login',require('./api/controllers/loginUser').loginUser);
 
-SwaggerExpress.create(config, async function(err, swaggerExpress) {
-  if (err) {
-    throw err;
-  }
+exports.createServer=async function(){
   try {
-    swaggerExpress.register(app);
     await database.initialize();
-    var port = process.env.PORT || 8080;
     await app.listen(port);
     log.info('Server started successfully ast port ' + port);
   } catch (e) {
     log.error(e);
     process.exit(1);
   }
-});
+}
+exports.createServer();
+
+
+
+
+
+
+

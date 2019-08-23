@@ -11,7 +11,7 @@ exports.initialize = async function() {
       host: '127.0.0.1',
       user: 'root',
       password: 'Password@123',
-      database: 'enviamajor_db'
+      database: 'enviamejor_db'
     }
   });
   return client.raw('SELECT 1 as dbIsUp;');
