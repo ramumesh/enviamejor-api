@@ -11,7 +11,7 @@ module.exports = {
 function registerUser(req, res) {
   var service = {
     apiName: 'register',
-    requestData: req.swagger.params.body.value
+    requestData: req.body
   };
   log.debug(service);
   exports._handleRegisterUser(service, function(err, data) {
@@ -24,7 +24,7 @@ function registerUser(req, res) {
 exports._handleRegisterUser = async function(service, callback) {
   try {
     const isFirstTimeQuery = {
-      sql: 'SELECT isFirstTime FROM ' + queryUtils.TABLES.login.name + ' WHERE phoneNumber=?;',
+      sql: 'SELECT isActive,isFirstTime FROM ' + queryUtils.TABLES.login.name + ' WHERE phoneNumber=?;',
       data: [service.requestData.phoneNumber]
     };
     const isFirstTimeQueryResult = await database.executeSelect(isFirstTimeQuery);
@@ -35,7 +35,15 @@ exports._handleRegisterUser = async function(service, callback) {
           'User profile has not been enabled. Please check with the store.'
         )
       );
-    } else if (isFirstTimeQueryResult[0][0].isFirstTime === 0) {
+    } else if (isFirstTimeQueryResult[0][0].isActive === 0) {
+      return callback(
+        responseUtils.getErrorResponse(
+          'USER_IS_NOT_ACTIVE',
+          'User profile is not enabled in our system. Please check with the store.'
+        )
+      );
+    }
+    else if (isFirstTimeQueryResult[0][0].isFirstTime === 0) {
       return callback(
         responseUtils.getErrorResponse(
           'USER_ALREADY_REGISTERED',

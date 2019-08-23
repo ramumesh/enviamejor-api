@@ -12,7 +12,7 @@ module.exports = {
 function loginUser(req, res) {
   var service = {
     apiName: 'login',
-    requestData: req.swagger.params.body.value
+    requestData: req.body
   };
   log.debug(service);
   exports._handleLoginUser(service, function(err, data) {

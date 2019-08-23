@@ -12,7 +12,7 @@ module.exports = {
 function validateUser(req, res) {
   var service = {
     apiName: 'validate',
-    requestData: req.swagger.params.body.value
+    requestData: req.body
   };
   exports._handleValidateUser(service, function(err, data) {
     if (err) {
